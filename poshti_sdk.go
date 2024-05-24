@@ -29,4 +29,11 @@ type Client struct {
 	subscriptions map[string]Subscription
 }
 
+func NewClient(url string) *Client {
+	return &Client{
+		url:           url,
+		messageChan:   make(chan Message),
+		subscriptions: make(map[string]Subscription),
+	}
+}
 
