@@ -52,3 +52,24 @@ func (c *Client) Connect(authToken string) error {
 	return nil
 }
 
+func (c *Client) readMessages() {
+	defer c.conn.Close()
+	for {
+		_, message, err := c.conn.ReadMessage()
+		if err != nil {
+			log.Println("read error:", err)
+			break
+		}
+
+		var msg Message
+		err = json.Unmarshal(message, &msg)
+		if err != nil {
+			log.Println("unmarshal error:", err)
+			continue
+		}
+
+		c.handleMessage(msg)
+	}
+}
+
+
