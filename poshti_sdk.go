@@ -37,3 +37,18 @@ func NewClient(url string) *Client {
 	}
 }
 
+func (c *Client) Connect(authToken string) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	var err error
+	wsURL := fmt.Sprintf("%s?vsn=2.0.0&auth=%s", c.url, authToken)
+	c.conn, _, err = websocket.DefaultDialer.Dial(wsURL, nil)
+	if err != nil {
+		return err
+	}
+
+	go c.readMessages()
+	return nil
+}
+
